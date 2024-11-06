@@ -37,16 +37,16 @@ postgres:
 agent: |
   import Agent, { getAgent } from 'npm:@knowlearning/agents/deno.js'
 
-  const TranslationAgent = getAgent('f74e9cb3-2b53-4c85-9b0c-f1d61b032b3f.localhost:5889')
-
   Agent.on('child', child => {
     const { environment: { user } } = child
+    //  TODO: validate user is a domain agent
     Agent.log(`GOT CHILD CONNECTION!!!!!!!! ${user}`)
+    const TranslatedItemDomainAgent = getAgent(user)
+
     child.on('mutate', async ({ scope, patch, id }) => {
-      if (patch.find(({ path }) => path[0] === 'translations')) {
-        Agent.log('TRANSLATIONS PATCH!!!!!!', scope, patch, id)
-        const translationsScope = await TranslationAgent.state(`translations/${id}`)
-        translationsScope.ping = true
+      if (patch.find(({ path }) => path[0] === 'ping')) {
+        const itemTranslation = await TranslatedItemDomainAgent.state(scope)
+        itemTranslation.boo = 'ya'
       }
     })
   })

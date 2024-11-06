@@ -1,6 +1,5 @@
 <script setup>
 import { reactive } from 'vue'
-import Agent from '@knowlearning/agents'
 
 const count = reactive(await Agent.state('count'))
 if (!count.num) count.num = 0
