@@ -1,0 +1,44 @@
+authorize:
+  sameDomain:
+    postgres: same_domain_authorization
+  crossDomain:
+    postgres: cross_domain_authorization
+postgres:
+  tables: {}
+  functions:
+    same_domain_authorization:
+      returns: BOOLEAN
+      language: PLpgSQL
+      body: |
+        BEGIN
+          RETURN TRUE;
+        END;
+      arguments:
+      - name: requestingUser
+        type: TEXT
+      - name: requestedScope
+        type: TEXT
+    cross_domain_authorization:
+      returns: BOOLEAN
+      language: PLpgSQL
+      body: |
+        BEGIN
+          RETURN TRUE;
+        END;
+      arguments:
+      - name: requestingDomain
+        type: TEXT
+      - name: requestingUser
+        type: TEXT
+      - name: requestedScope
+        type: TEXT
+  queries:
+    metadata: SELECT * FROM metadata LIMIT 20
+agent: |
+  import Agent, { getAgent } from 'npm:@knowlearning/agents/deno.js'
+
+  Agent.on('child', child => {
+    const { environment: { user } } = child
+    console.log(`GOT CHILD CONNECTION!!!!!!!! ${child}`)
+    child.on('mutate', ({ scope, patch }) => {})
+  })
