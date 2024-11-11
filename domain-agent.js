@@ -13,7 +13,7 @@
         const itemState = await Agent.state(id)
         Agent.log('TRANSLATIONS PATCH', scope, patch, id, JSON.parse(JSON.stringify(itemState)))
         itemState.translations.paths.forEach(async path => {
-          const translatableTargetName = JSON.stringify([id, ...path])
+          const translatableTargetName = `translatable_target/${JSON.stringify([id, ...path])}`
           Agent.log('GETTING METADATA', translatableTargetName)
           const translatableTargetMetadata = await TranslationAgent.metadata(translatableTargetName)
           Agent.log('GOT METADATA', JSON.parse(JSON.stringify(translatableTargetMetadata)))
