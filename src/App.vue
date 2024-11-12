@@ -1,14 +1,10 @@
 <script setup>
-  import Chooser from './chooser.vue'
-  import Customizer from './customizer.vue'
-  import Viewer from './viewer.vue'
+  import Sandbox from './sandbox.vue'
 </script>
 
 <template>
   <Suspense>
-    <Chooser />
-    <Customizer />
-    <Viewer />
+    <Sandbox />
   </Suspense>
 </template>
 
