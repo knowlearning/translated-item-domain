@@ -66,7 +66,7 @@ agent: |
           translatableTarget.source_language = itemState.translations.source_language
           translatableTarget.path = [id, ...path]
           Agent.log('RESOLVING PATH', [...path])
-          const source_string = resolvePath(path, itemState)
+          const source_string = resolvePath([...path], itemState)
           Agent.log('GOT SOURCE STRING', translatableTargetName, source_string)
           if (source_string) translatableTarget.source_string = source_string
         })
