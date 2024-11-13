@@ -13,7 +13,6 @@
       .forEach(({ path, value }) => {
         let ref = translated
         const p = path.slice(1)
-        console.log(ref, p)
         while (p.length > 1 && ref[p[0]]) ref = ref[p.shift()]
         ref[p[0]] = value
       })
