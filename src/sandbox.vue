@@ -8,7 +8,10 @@
   const translatedActiveItemData = ref(null)
   const translationLanguage = ref('en')
 
-  function applyTranslations(translations, translated) {
+  async function translatedObject(id, lang) {
+    const translations = await Agent.query('translate-item', [id, [lang]], TRANSLATION_DOMAIN)
+    let translated = JSON.parse(JSON.stringify(await Agent.state(id)))
+
     translations
       .forEach(({ path, value }) => {
         let ref = translated
@@ -16,6 +19,8 @@
         while (p.length > 1 && ref[p[0]]) ref = ref[p.shift()]
         ref[p[0]] = value
       })
+
+      return translated
   }
 
   watch(
@@ -29,13 +34,9 @@
   watch(
     () => [activeItemData.value, translationLanguage.value],
     async () => {
-      const translated = JSON.parse(JSON.stringify(activeItemData.value))
       const id = activeItem.value
       const lang = translationLanguage.value
-      const translations = await Agent.query('translation-set', [id, lang], TRANSLATION_DOMAIN)
-      console.log('TRANSLATIONS', translations)
-      applyTranslations(translations, translated)
-      translatedActiveItemData.value = translated
+      translatedActiveItemData.value = await translatedObject(id, [lang])
     }
   )
 
