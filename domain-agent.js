@@ -6,12 +6,8 @@
   const TranslationAgent = getAgent(TRANSLATION_DOMAIN)
 
   Agent.on('child', child => {
-    const { environment: { user } } = child
-    Agent.log(`GOT CHILD CONNECTION!!!!!!!! ${user}`)
-
     child.on('mutate', async ({ id }) => {
       if (await isTranslatableItem(id)) {
-        Agent.log('GOT TRANSLATABLE ITEM', id)
         await handleTranslatableItem(id)
       }
     })
@@ -21,26 +17,19 @@
     const itemState = await TranslationAgent.state(id)
     itemState.translations.paths.forEach(async path => {
       const translatableTargetName = `translatable_target/${JSON.stringify([id, ...path])}`
-      Agent.log('GETTING METADATA', translatableTargetName)
       const translatableTargetMetadata = await TranslationAgent.metadata(translatableTargetName)
-      Agent.log('GOT METADATA', JSON.parse(JSON.stringify(translatableTargetMetadata)))
 
       if (translatableTargetMetadata.active_type !== TRANSLATABLE_TARGET_TYPE) {
         translatableTargetMetadata.active_type = TRANSLATABLE_TARGET_TYPE
       }
 
-      Agent.log('GETTING STATE', translatableTargetName)
       const translatableTarget = await TranslationAgent.state(translatableTargetName)
-      Agent.log('GOT STATE', JSON.stringify(translatableTarget))
-
       const { source_language } = itemState.translations
 
       translatableTarget.source_language = source_language
       translatableTarget.path = [id, ...path]
 
-      Agent.log('RESOLVING PATH', [...path])
       const source_string = resolvePath([...path], itemState)
-      Agent.log('GOT SOURCE STRING', translatableTargetName, source_string)
       translatableTarget.source_string = source_string || null
     })
   }

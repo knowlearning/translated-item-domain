@@ -1,5 +1,7 @@
 <script setup>
   import { ref, reactive, watch } from 'vue'
+  import ContentReference from './content-reference.vue';
+
   const TRANSLATION_DOMAIN = 'f74e9cb3-2b53-4c85-9b0c-f1d61b032b3f.localhost:5889'
 
   const myStuff = reactive(await Agent.state('my-content'))
@@ -19,6 +21,8 @@
         while (p.length > 1 && ref[p[0]]) ref = ref[p.shift()]
         ref[p[0]] = value
       })
+
+      delete translated.translations
 
       return translated
   }
@@ -42,7 +46,17 @@
 
   async function addNew() {
     const newId = await Agent.create({
-      active: { name: "Bananagrams", hints: ["no", 12, "eating", {}, "slugs"]}
+      active: {
+        name: "Multiple Choice Question",
+        question: 'What is the third planet from the sun?',
+        options: [
+          'Mars',
+          'Venus',
+          'Earth',
+          'Which sun?'
+        ],
+        hint: 'The sun that orbits earth.'
+      }
     })
     myStuff[newId] = true
     activeItem.value = newId
@@ -76,7 +90,9 @@
         :class="id === activeItem ? 'active': ''"
         @click="activeItem = id"
         @click.shift="delete myStuff[id]"
-    >{{ id }}</div>
+    >
+      <ContentReference :id="id" :key="id"/> {{ id }}
+    </div>
   </div>
   <button @click="addTranslations" :disabled="!activeItem">Add Translations</button>
   <button @click="addNew">Add New</button>
