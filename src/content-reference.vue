@@ -1,23 +1,27 @@
 <script setup>
-  import { ref } from 'vue'
+  import { ref, watch } from 'vue'
 
-  const { id } = defineProps({
+  const props = defineProps({
     id: String
   })
 
   const name = ref(null)
 
-  Agent
-    .state(id)
-    .then(async s => {
-      if (s.name) name.value = s.name
-      else {
-        const md = await Agent.metadata(id)
-        name.value = md.name
-      }
-    })
+  watch(() => props.id, setName)
+  setName()
+
+  async function setName() {
+    name.value = null
+    const state = await Agent.state(props.id)
+    if (state.name) name.value = state.name
+    else {
+      const md = await Agent.metadata(id)
+      name.value = md.name
+    }
+  }
 </script>
 
 <template>
-  <span>{{ name }}</span>
+  <span v-if="name === null">-</span>
+  <span v-else>{{ name }}</span>
 </template>
