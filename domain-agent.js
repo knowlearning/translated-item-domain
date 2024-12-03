@@ -24,13 +24,11 @@
       }
 
       const translatableTarget = await TranslationAgent.state(translatableTargetName)
-      const { source_language } = itemState.translations
-
-      translatableTarget.source_language = source_language
-      translatableTarget.path = [id, ...path]
-
       const source_string = resolvePath([...path], itemState)
+
+      translatableTarget.source_language = itemState.translations.source_language
       translatableTarget.source_string = source_string || null
+      translatableTarget.path = [id, ...path]
     })
   }
 
